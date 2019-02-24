@@ -7,30 +7,37 @@ using UnityEngine.UI;
 public class NumberGenerator : MonoBehaviour
 {
 	public GameObject panel;
-	public Text text;
+	public Text text, CC, IC;
 	public Text textUser;
-	public float speed = 1f;
+	public float speed = 1f, sec2t = 2f;
 
 	private bool lockedKey = true;
 	private int userNumber = 0, N = 0;
 	private int round = 1, dig = 2;
 	private int Correct = 0, Incorrect = 0;
 
-	private float x, i;
-	private bool T=false;
+	private float x, i, sec2timer;
+	private bool T=false, a=true, s2t = false;
 
 	private void Start()
 	{
 		panel.SetActive(false);
 		x = 0f;
 		i = Time.time;
+		sec2timer = 0f;
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
 
-		if(Input.GetKeyDown(KeyCode.A)){
+		if(Input.GetKeyDown(KeyCode.A) && a){
+
+			a = false;
+			Correct = 0;
+			Incorrect = 0;
+			CC.text = "0";
+			IC.text = "0";
 			GenerateNumber();
 		}
 
@@ -118,6 +125,12 @@ public class NumberGenerator : MonoBehaviour
 			Timer();
 			T = false;
 		}
+
+		if (Time.time >= sec2timer && s2t)
+		{
+			GenerateNumber();
+			s2t = false;
+		}
 	}
 
 	private void InputN(int N)
@@ -129,6 +142,7 @@ public class NumberGenerator : MonoBehaviour
 	{
 		N = 0;
 		text.text = "";
+		text.color = Color.white;
 
 		for (int i=1; i <= dig; i++)
 		{
@@ -167,8 +181,6 @@ public class NumberGenerator : MonoBehaviour
 
 	private void Timer()
 	{
-		Debug.Log("Timer");
-
 		userNumber = 0;
 		lockedKey = false;
 		panel.SetActive(true);
@@ -182,19 +194,28 @@ public class NumberGenerator : MonoBehaviour
 		if (N != userNumber)
 		{
 			Incorrect++;
+			IC.text = Incorrect.ToString();
+			text.text = "WRONG";
+			text.color = Color.red;
+
 		}
 		else
 		{
 			Correct++;
+			CC.text = Correct.ToString();
+			text.text = "CORRECT";
+			text.color = Color.green;
 		}
 
 		if (round < 100)
 		{
-			GenerateNumber();
+			sec2timer = Time.time + sec2t;
+			s2t = true;
 		}
 		else
 		{
 			text.text = "Correct: " + Correct + "\nIncorrect: " + Incorrect;
+			a = true;
 		}
 	}
 }
