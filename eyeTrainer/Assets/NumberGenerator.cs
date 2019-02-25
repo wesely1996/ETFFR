@@ -15,6 +15,7 @@ public class NumberGenerator : MonoBehaviour
 	private int userNumber = 0, N = 0;
 	private int round = 1, dig = 2;
 	private int Correct = 0, Incorrect = 0;
+	private int consecutiveC = 0, consecutiveI = 0;
 
 	private float x, i, sec2timer;
 	private bool T=false, a=true, s2t = false;
@@ -97,7 +98,6 @@ public class NumberGenerator : MonoBehaviour
 			{
 				textUser.text = textUser.text.Substring(0, textUser.text.Length - 1); ;
 				userNumber = (int)(userNumber / 10);
-				Debug.Log(userNumber);
 			}
 			if (Input.GetKeyDown(KeyCode.Return))
 			{
@@ -143,6 +143,7 @@ public class NumberGenerator : MonoBehaviour
 		N = 0;
 		text.text = "";
 		text.color = Color.white;
+		Debug.Log(speed);
 
 		for (int i=1; i <= dig; i++)
 		{
@@ -159,7 +160,6 @@ public class NumberGenerator : MonoBehaviour
 			}
 
 			N = N * 10 + rand;
-			Debug.Log(N);
 		}
 
 		InputN(N);
@@ -189,7 +189,6 @@ public class NumberGenerator : MonoBehaviour
 
 	private void EndInput()
 	{
-		Debug.Log("EndInput");
 		lockedKey = true;
 		if (N != userNumber)
 		{
@@ -198,6 +197,17 @@ public class NumberGenerator : MonoBehaviour
 			text.text = "WRONG";
 			text.color = Color.red;
 
+			if(consecutiveI != 0)
+			{
+				speed += 0.05f;
+				if (speed > 1f)
+				{
+					speed = 1f;
+				}
+			}
+			consecutiveI++;
+			consecutiveC = 0;
+
 		}
 		else
 		{
@@ -205,6 +215,23 @@ public class NumberGenerator : MonoBehaviour
 			CC.text = Correct.ToString();
 			text.text = "CORRECT";
 			text.color = Color.green;
+
+			if (consecutiveC != 0)
+			{
+				speed -= 0.05f;
+				if (speed < 0.05f)
+				{
+					speed = 0.05f;
+				}
+			}
+			consecutiveC++;
+			consecutiveI = 0;
+
+		}
+
+		if ((round-1) % 20 == 0)
+		{
+			speed = 0.5f;
 		}
 
 		if (round < 100)
